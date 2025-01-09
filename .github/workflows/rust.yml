@@ -4,16 +4,23 @@ on:
   push:
     tags:
       - 'v*'
-    branches:
-      - main
 
 jobs:
   check:
-    if: github.ref == 'refs/heads/main' && startsWith(github.ref, 'refs/tags/v')  # Only run if both conditions are met
     name: Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Check if tag is on main
+        run: |
+          TAG_BRANCH=$(git branch -r --contains ${{ github.ref }} | grep 'origin/main' || true)
+          if [ -z "$TAG_BRANCH" ]; then
+            echo "Tag must be on main branch"
+            exit 1
+          fi
       
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -40,7 +47,6 @@ jobs:
 
   build:
     needs: check
-    if: github.ref == 'refs/heads/main' && startsWith(github.ref, 'refs/tags/v')
     name: Build ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -88,7 +94,6 @@ jobs:
 
   release:
     needs: build
-    if: github.ref == 'refs/heads/main' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     
     steps:
