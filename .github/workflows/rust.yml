@@ -1,36 +1,77 @@
-name: Rust
+name: Rust CI/CD
 
 on:
   push:
-    branches: [ "main" ]
     tags:
       - 'v*'
-  pull_request:
-    branches: [ "main" ]
-
-env:
-  CARGO_TERM_COLOR: always
+    branches:
+      - main
 
 jobs:
+  check:
+    if: github.ref == 'refs/heads/main' && startsWith(github.ref, 'refs/tags/v')  # Only run if both conditions are met
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+        
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+        
+      - name: Run tests
+        run: cargo test --verbose
+
   build:
+    needs: check
+    if: github.ref == 'refs/heads/main' && startsWith(github.ref, 'refs/tags/v')
     name: Build ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
             artifact_name: linux
-            asset_name: readme-generator-linux
+            asset_name: wtfm
           - os: windows-latest
             artifact_name: windows
-            asset_name: readme-generator-windows.exe
+            asset_name: wtfm.exe
           - os: macos-latest
             artifact_name: macos
-            asset_name: readme-generator-macos
+            asset_name: wtfm
 
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
     
     - name: Build
       run: cargo build --verbose --release
@@ -43,11 +84,12 @@ jobs:
       with:
         name: ${{ matrix.artifact_name }}
         path: target/release/${{ matrix.asset_name }}
+        if-no-files-found: error
 
   release:
     needs: build
+    if: github.ref == 'refs/heads/main' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
     
     steps:
       - name: Download artifacts
@@ -60,5 +102,7 @@ jobs:
             linux/*
             windows/*
             macos/*
+          generate_release_notes: true
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
