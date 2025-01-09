@@ -1,10 +1,17 @@
 # {{ project_name }} {{ version }}
 
 {{ description }}
+{% if authors %}
+## Authors
 
+{% for author in authors %}
+- {{ author }}
+{% endfor %}{% endif %}
 ## License
 
 Licensed under {{ license }}.
+
 {% if setup_ci %}## Continuous Integration
 
-This project includes a basic CI configuration.{% endif %}
+This project includes a basic CI configuration.
+{% endif %}
