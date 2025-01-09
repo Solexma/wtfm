@@ -3,8 +3,8 @@ mod commands;
 mod config;
 mod utils;
 
-use cli::args::{Cli, Commands};
 use clap::Parser;
+use cli::args::{Cli, Commands};
 
 fn main() {
     let cli = Cli::parse();

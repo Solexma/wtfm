@@ -41,7 +41,8 @@ impl WizardAnswers {
             .items(&["Yes", "No"])
             .default(0)
             .interact()
-            .expect("Failed to get CI choice") == 0;
+            .expect("Failed to get CI choice")
+            == 0;
 
         let author_quantity: u32 = Input::new()
             .with_prompt("How many authors?")
@@ -50,7 +51,12 @@ impl WizardAnswers {
             .expect("Failed to get authors quantity");
 
         let authors = (0..author_quantity)
-            .map(|_| Input::new().with_prompt("Author name").interact().expect("Failed to get author name"))
+            .map(|_| {
+                Input::new()
+                    .with_prompt("Author name")
+                    .interact()
+                    .expect("Failed to get author name")
+            })
             .collect();
 
         Self {

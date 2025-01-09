@@ -4,7 +4,7 @@ use tera::{Context, Tera};
 pub fn generate_readme_with_template(answers: &WizardAnswers) -> String {
     // Embed the template directly in the binary
     let template_str = include_str!("../../templates/readme.tera");
-    
+
     let mut tera = Tera::default();
     tera.add_raw_template("readme.tera", template_str)
         .expect("Failed to parse template");
@@ -39,7 +39,7 @@ mod tests {
         };
 
         let readme = generate_readme_with_template(&answers);
-        
+
         // Verify that README contains correct information
         assert!(readme.contains("# Test Project 0.1.0"));
         assert!(readme.contains("A test project"));
@@ -62,7 +62,7 @@ mod tests {
         };
 
         let readme = generate_readme_with_template(&answers);
-        
+
         // Verify that CI section is not included when setup_ci is false
         assert!(!readme.contains("Continuous Integration"));
         assert!(readme.contains("Author 1"));
