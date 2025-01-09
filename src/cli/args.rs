@@ -10,6 +10,10 @@ pub struct Cli {
     /// Output directory for the generated README
     #[arg(short, long, default_value = ".")]
     pub output: PathBuf,
+
+    /// Project directory to analyze
+    #[arg(short, long, default_value = ".")]
+    pub project_folder: PathBuf,
 }
 
 #[derive(clap::Subcommand)]

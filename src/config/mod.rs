@@ -13,12 +13,21 @@ pub struct WtfmConfig {
     pub setup_ci: bool,
     pub author_quantity: u32,
     pub authors: Vec<Author>,
+    pub git_info: Option<GitInfo>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Author {
     pub name: String,
     pub email: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GitInfo {
+    pub is_git_repo: bool,
+    pub current_branch: Option<String>,
+    pub remote_url: Option<String>,
+    pub tags: Vec<String>,
 }
 
 pub fn load_config<P: AsRef<Path>>(path: P) -> Option<WtfmConfig> {
@@ -50,6 +59,7 @@ mod tests {
                 name: "Test Author".to_string(),
                 email: "test@example.com".to_string(),
             }],
+            git_info: None,
         };
 
         // Test saving configuration

@@ -1,4 +1,5 @@
 use crate::cli::args::Cli;
+use crate::utils::git::Git;
 use crate::config::wizard::WizardAnswers;
 use crate::config::Author;
 use std::fs;
@@ -7,6 +8,8 @@ pub fn execute(cli: &Cli) {
     let config_path = ".wtfm.json";
     let config = crate::config::load_config(config_path);
 
+    let git = Git::new(&cli.project_folder);
+    
     let answers = if config.is_none() {
         let answers = WizardAnswers::from_interactive();
         let config = crate::config::WtfmConfig {
@@ -28,6 +31,16 @@ pub fn execute(cli: &Cli) {
                     Author { name, email }
                 })
                 .collect(),
+            git_info: if git.is_repo() {
+                Some(crate::config::GitInfo {
+                    is_git_repo: true,
+                    current_branch: git.info().and_then(|i| i.current_branch.clone()),
+                    remote_url: git.info().and_then(|i| i.remote_url.clone()),
+                    tags: git.info().map(|i| i.tags.clone()).unwrap_or_default(),
+                })
+            } else {
+                None
+            },
         };
         crate::config::save_config(config_path, &config).expect("Failed to save config");
         answers
@@ -48,6 +61,10 @@ pub fn execute(cli: &Cli) {
         }
     };
 
+    if !git.is_repo() {
+        println!("Note: Current directory is not a git repository");
+    }
+
     fs::create_dir_all(&cli.output).expect("Failed to create output directory");
     let readme_path = cli.output.join("README.md");
 
@@ -60,26 +77,27 @@ pub fn execute(cli: &Cli) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cli::args::Cli;
+    use std::fs;
     use tempfile::TempDir;
 
     #[test]
     fn test_execute_generate() {
-        // Create a temporary directory for testing
+        // Create a temporary directory for our test
         let temp_dir = TempDir::new().unwrap();
-        let output_path = temp_dir.path().to_path_buf();
+        let temp_path = temp_dir.path();
 
-        // Create a mock CLI instance
+        // Create a CLI instance pointing to our temp directory
         let cli = Cli {
             command: None,
-            output: output_path.clone(),
+            output: temp_path.to_path_buf(),
+            project_folder: temp_path.to_path_buf(),
         };
 
         // Execute the generate command
         execute(&cli);
 
-        // Verify that README was created
-        let readme_path = output_path.join("README.md");
+        // Check if README.md was created
+        let readme_path = temp_path.join("README.md");
         assert!(readme_path.exists());
 
         // Verify that README content is valid
