@@ -105,13 +105,16 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         
+      - name: Display structure
+        run: ls -R
+        
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            linux/*
-            windows/*
-            macos/*
+            linux/wtfm
+            windows/wtfm.exe
+            macos/wtfm
           generate_release_notes: true
           draft: true
         env:
