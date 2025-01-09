@@ -15,6 +15,7 @@ pub fn generate_readme_with_template(answers: &WizardAnswers) -> String {
     context.insert("version", &answers.version);
     context.insert("license", &answers.license);
     context.insert("setup_ci", &answers.setup_ci);
+    context.insert("author_quantity", &answers.author_quantity);
     context.insert("authors", &answers.authors);
 
     tera.render("readme.tera", &context)
@@ -33,6 +34,7 @@ mod tests {
             version: "0.1.0".to_string(),
             license: "MIT".to_string(),
             setup_ci: true,
+            author_quantity: 2,
             authors: vec!["Author 1".to_string(), "Author 2".to_string()],
         };
 
@@ -55,6 +57,7 @@ mod tests {
             version: "0.1.0".to_string(),
             license: "MIT".to_string(),
             setup_ci: false,
+            author_quantity: 2,
             authors: vec!["Author 1".to_string(), "Author 2".to_string()],
         };
 
