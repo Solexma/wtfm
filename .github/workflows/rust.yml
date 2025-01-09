@@ -60,12 +60,15 @@ jobs:
           - os: ubuntu-latest
             artifact_name: linux
             asset_name: wtfm
+            zip_name: wtfm-linux.zip
           - os: windows-latest
             artifact_name: windows
             asset_name: wtfm.exe
+            zip_name: wtfm-windows.zip
           - os: macos-latest
             artifact_name: macos
             asset_name: wtfm
+            zip_name: wtfm-macos.zip
 
     steps:
     - uses: actions/checkout@v4
@@ -85,6 +88,18 @@ jobs:
     - name: Build
       run: cargo build --verbose --release
     
+    - name: Create ZIP (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        cd target/release
+        zip ${{ matrix.zip_name }} ${{ matrix.asset_name }}
+        
+    - name: Create ZIP (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        Compress-Archive -Path "target/release/${{ matrix.asset_name }}" -DestinationPath "target/release/${{ matrix.zip_name }}"
+    
     - name: Run tests
       run: cargo test --verbose
       
@@ -92,7 +107,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.artifact_name }}
-        path: target/release/${{ matrix.asset_name }}
+        path: target/release/${{ matrix.zip_name }}
         if-no-files-found: error
 
   release:
@@ -105,16 +120,14 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         
-      - name: Display structure
+      - name: List files
         run: ls -R
         
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            linux/wtfm
-            windows/wtfm.exe
-            macos/wtfm
+            **/wtfm-*.zip
           generate_release_notes: true
           draft: true
         env:
