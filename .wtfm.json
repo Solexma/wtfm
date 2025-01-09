@@ -1,0 +1,14 @@
+{
+  "project_name": "WTFM (Write The F*cking Manual) ",
+  "description": "This CLI tool will guide you in writing that (F) Manual.",
+  "version": "0.1.0",
+  "license": "AGPL-3.0",
+  "setup_ci": false,
+  "author_quantity": 1,
+  "authors": [
+    {
+      "name": "MiPnamic Von Wirklichkeit",
+      "email": "mipnamic@mipnamic.net"
+    }
+  ]
+}

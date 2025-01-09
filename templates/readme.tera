@@ -1,0 +1,10 @@
+# {{ project_name }} {{ version }}
+
+{{ description }}
+
+## License
+
+Licensed under {{ license }}.
+{% if setup_ci %}## Continuous Integration
+
+This project includes a basic CI configuration.{% endif %}
