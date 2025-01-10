@@ -1,7 +1,7 @@
 use crate::cli::args::Cli;
-use crate::utils::git::Git;
 use crate::config::wizard::WizardAnswers;
 use crate::config::Author;
+use crate::utils::git::Git;
 use std::fs;
 
 pub fn execute(cli: &Cli) {
@@ -9,7 +9,7 @@ pub fn execute(cli: &Cli) {
     let config = crate::config::load_config(config_path);
 
     let git = Git::new(&cli.project_folder);
-    
+
     let answers = if config.is_none() {
         let answers = WizardAnswers::from_interactive();
         let config = crate::config::WtfmConfig {

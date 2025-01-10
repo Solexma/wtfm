@@ -12,6 +12,7 @@ fn main() {
     match cli.command {
         Some(Commands::Author) => commands::author::execute(&cli),
         Some(Commands::Generate) => commands::generate::execute(&cli),
-        None => commands::generate::execute(&cli), // Default to generate command
+        Some(Commands::Analyze) => commands::analyze::execute(&cli),
+        None => commands::analyze::execute(&cli),
     }
 }

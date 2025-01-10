@@ -18,6 +18,8 @@ pub struct Cli {
 
 #[derive(clap::Subcommand)]
 pub enum Commands {
+    /// Analyze the project
+    Analyze,
     /// Display author information
     Author,
     /// Generate README file
