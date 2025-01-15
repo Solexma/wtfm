@@ -1,19 +1,24 @@
 use crate::config::wizard::WizardAnswers;
-use tera::{Context, Tera};
+use std::collections::HashMap;
+use tera::{Context, Tera, Value};
+
+fn newline_fn(_args: &HashMap<String, Value>) -> Result<Value, tera::Error> {
+    Ok(Value::String("\n".to_string()))
+}
 
 // Template structure:
 // In the beginning we will implement a standard GitHub README.md template
 // Then we will move to more structured forms like DocBook and Diataxis
 pub fn generate_readme_with_template(answers: &WizardAnswers) -> String {
-    // At the moment we embed the template directly in the binary
-    // TODO:
-    // - Add a way to load the template from a file
-    // - Add a way to load the template from a remote source
-    let template_str = include_str!("../../templates/readme.tera");
+    let mut tera = match Tera::new("templates/**/*") {
+        Ok(t) => t,
+        Err(e) => {
+            panic!("Parsing error(s): {}", e);
+        }
+    };
 
-    let mut tera = Tera::default();
-    tera.add_raw_template("readme.tera", template_str)
-        .expect("Failed to parse template");
+    // Registra la funzione newline
+    tera.register_function("newline", newline_fn);
 
     let mut context = Context::new();
     context.insert("project_name", &answers.project_name);
@@ -21,11 +26,14 @@ pub fn generate_readme_with_template(answers: &WizardAnswers) -> String {
     context.insert("version", &answers.version);
     context.insert("license", &answers.license);
     context.insert("setup_ci", &answers.setup_ci);
-    context.insert("author_quantity", &answers.author_quantity);
     context.insert("authors", &answers.authors);
 
-    tera.render("readme.tera", &context)
-        .expect("Failed to render template")
+    match tera.render("readme.tera", &context) {
+        Ok(rendered) => rendered,
+        Err(e) => {
+            panic!("Failed to render template: {}", e);
+        }
+    }
 }
 
 #[cfg(test)]
