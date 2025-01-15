@@ -1,7 +1,11 @@
-# WTFM (Write The F*cking Manual)  0.1.0
+# WTFM (Write The F*cking Manual)
 
 This CLI tool will guide you in writing that (F) Manual.
 
 ## License
 
-Licensed under AGPL-3.0.
+Licensed under GNU Affero General Public License v3.0 or later.
+
+## Authors/Maintainers
+
+- MiPnamic Von Wirklichkeit <mipnamic@mipnamic.net>

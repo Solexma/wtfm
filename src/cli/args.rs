@@ -7,21 +7,28 @@ pub struct Cli {
     #[command(subcommand)]
     pub command: Option<Commands>,
 
-    /// Output directory for the generated README
-    #[arg(short, long, default_value = ".")]
-    pub output: PathBuf,
-
-    /// Project directory to analyze
-    #[arg(short, long, default_value = ".")]
-    pub project_folder: PathBuf,
+    /// Enable debug output
+    #[arg(short, long)]
+    pub debug: bool,
 }
 
 #[derive(clap::Subcommand)]
 pub enum Commands {
     /// Analyze the project
-    Analyze,
+    Analyze {
+        /// Project directory to analyze
+        #[arg(short, long, default_value = ".")]
+        project_folder: PathBuf,
+    },
     /// Display author information
     Author,
     /// Generate README file
-    Generate,
+    Generate {
+        /// Output directory for the generated README
+        #[arg(short, long, default_value = ".")]
+        output: PathBuf,
+        /// Project directory
+        #[arg(short, long, default_value = ".")]
+        project_folder: PathBuf,
+    },
 }

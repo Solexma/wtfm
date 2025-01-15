@@ -1,13 +1,16 @@
 use super::parser;
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GitInfo {
+    pub is_git_repo: bool,
     pub current_branch: Option<String>,
     pub remote_url: Option<String>,
     pub tags: Vec<String>,
 }
 
+#[allow(dead_code)]
 pub struct Git {
     path: std::path::PathBuf,
     git_path: std::path::PathBuf,

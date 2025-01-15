@@ -1,17 +1,89 @@
-# {{ project_name }} {{ version }}
+{% if project_name %}# {{ project_name }}{% endif %}
+{% if badge_version %}![Version](https://img.shields.io/badge/version-{{ version }}-blue.svg){% endif %}
+{% if description %}{{ description }}{% endif %}
+{%- if overview %}
 
-{{ description }}
-{% if authors %}
-## Authors
+## Overview
 
-{% for author in authors %}
-- {{ author }}
-{% endfor %}{% endif %}
+{{ overview }}
+{%- endif %}
+
+{%- if screenshot %}
+![Screenshot]({{ screenshot }})
+{%- endif %}
+
+{%- if demo %}
+![Demo]({{ demo }})
+{%- endif %}
+
+{%- if features and features | length > 0 %}
+
+## Features
+
+{% for feature in features -%}
+- {{ feature }}
+{% endfor -%}
+{%- endif %}
+
+{%- if getting_started %}
+
+## Getting Started
+
+{%- if pre_requisites and pre_requisites | length > 0 %}
+
+### Prerequisites
+
+{% for pre_requisite in pre_requisites -%}
+- {{ pre_requisite }}
+{% endfor -%}
+{%- endif %}
+
+{%- if installation and installation | length > 0 %}
+
+### Installation
+
+{% for step in installation -%}
+- {{ step }}
+{% endfor -%}
+{%- endif %}
+
+{%- if usage and usage | length > 0 %}
+
+### Usage
+
+{% for example in usage -%}
+{{ example }}
+{% endfor -%}
+{%- endif %}
+{%- endif %}
+
+{%- if license %}
+
 ## License
 
-Licensed under {{ license }}.
+Licensed under {{ license.name }}.
+{%- endif %}
 
-{% if setup_ci %}## Continuous Integration
+{%- if contributors and contributors | length > 0 %}
+## Contributors
+
+{% for contributor in contributors -%}
+- {{ contributor }}
+{% endfor -%}
+{%- endif %}
+
+{%- if authors and authors | length > 0 %}
+
+## Authors/Maintainers
+
+{% for author in authors -%}
+- {{ author }}
+{% endfor -%}
+{%- endif %}
+
+{%- if setup_ci %}
+
+## Continuous Integration
 
 This project includes a basic CI configuration.
-{% endif %}
+{%- endif %}

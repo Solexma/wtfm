@@ -1,50 +1,109 @@
-use crate::cli::args::Cli;
+use crate::cli::args::Commands;
+use crate::config::wtfm::WtfmConfig;
+use crate::debug;
+use crate::utils::cargo::cargo::Cargo;
 use crate::utils::git::Git;
+use colored::*;
 use std::fs;
 
-pub fn execute(cli: &Cli) {
-    // look into current folder for :
-    // - .wtfm.json -> it's a wtfm project
-    // - .git folder -> it's a git repo
-    // - package.json -> it's a node project
-    // - Cargo.toml -> it's a rust project
+// Analyze the current project and print the results
+// TODO:
+// - Dig deeper into .git area for fetching more informations, maybe via API, detacting if it's GitHub/Gitlab/Bitbucket/...
+// - Add a way to edit the .wtfm.json file
+pub fn execute(cmd: &Commands, debug: bool) -> Result<(), Box<dyn std::error::Error>> {
+    if let Commands::Analyze { project_folder } = cmd {
+        // look into current folder for :
+        // - .wtfm.json -> it's a wtfm project (if there's a file, user can edit it)
+        // - .git folder -> it's a git repo
+        // - package.json -> it's a node project (we can get project information and scripts from here)
+        // - Cargo.toml -> it's a rust project (we can get package information from here)
+        // - LICENSE -> it's a license file (we can get license information from here ?)
 
-    // if .wtfm.json exists we read the json and check if the git area in populated, if the project is a git repo
+        let mut is_wtfm_project = false;
+        let mut is_git_repo = false;
+        let mut is_node_project = false;
+        let mut is_rust_project = false;
+        let mut is_license_file = false;
 
-    let mut is_wtfm_project = false;
-    let mut is_git_repo = false;
-    let mut is_node_project = false;
-    let mut is_rust_project = false;
+        // Usa project_folder per tutti i percorsi
+        let config_path = project_folder.join(".wtfm.json");
+        let package_json_path = project_folder.join("package.json");
+        let license_path = project_folder.join("LICENSE");
 
-    let config_path = &cli.project_folder.join(".wtfm.json");
-    let config = crate::config::load_config(config_path);
+        debug!("Looking for config at: {:?}", config_path);
+        debug!("Config file exists: {}", config_path.exists());
 
-    if config.is_some() {
-        is_wtfm_project = true;
+        let config = WtfmConfig::load(&config_path, debug);
+        debug!("Config loaded: {}", config.is_some());
+
+        if config.is_some() {
+            is_wtfm_project = true;
+            debug!("Found .wtfm.json configuration file");
+        }
+
+        let git = Git::new(&project_folder);
+        if git.is_repo() {
+            is_git_repo = true;
+            debug!("Found .git folder");
+        }
+
+        if fs::metadata(&package_json_path).is_ok() {
+            is_node_project = true;
+            debug!("Found package.json file");
+        }
+
+        let cargo = Cargo::new(&project_folder);
+        if cargo.info().is_some() {
+            is_rust_project = true;
+            debug!("Found Cargo.toml file");
+        }
+
+        if fs::metadata(&license_path).is_ok() {
+            is_license_file = true;
+            debug!("Found LICENSE file");
+        }
+
+        println!("{}: {}", "Project Status".bold(), "-".repeat(40));
+        println!(
+            "WTFM Project: {}",
+            if is_wtfm_project {
+                "Yes".green()
+            } else {
+                "No".red()
+            }
+        );
+        println!(
+            "Git Repository: {}",
+            if is_git_repo {
+                "Yes".green()
+            } else {
+                "No".red()
+            }
+        );
+        println!(
+            "Rust Project: {}",
+            if is_rust_project {
+                "Yes".green()
+            } else {
+                "No".red()
+            }
+        );
+        println!(
+            "Node.js Project: {}",
+            if is_node_project {
+                "Yes".green()
+            } else {
+                "No".red()
+            }
+        );
+        println!(
+            "License File: {}",
+            if is_license_file {
+                "Yes".green()
+            } else {
+                "No".red()
+            }
+        );
     }
-
-    let git = Git::new(&cli.project_folder);
-    if git.is_repo() {
-        is_git_repo = true;
-    }
-
-    if fs::metadata("package.json").is_ok() {
-        is_node_project = true;
-    }
-
-    if fs::metadata("Cargo.toml").is_ok() {
-        is_rust_project = true;
-    }
-
-    println!("is_wtfm_project: {}", is_wtfm_project);
-
-    println!("is_git_repo: {}", is_git_repo);
-    if is_git_repo {
-        let git_info = git.info();
-        println!("git_info: {:?}", git_info);
-    }
-
-    println!("is_node_project: {}", is_node_project);
-
-    println!("is_rust_project: {}", is_rust_project);
+    Ok(())
 }

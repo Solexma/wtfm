@@ -1,18 +1,9 @@
-use crate::cli::args::Cli;
+use crate::cli::args::Commands;
 
-pub fn execute(_cli: &Cli) {
-    let authors = env!("CARGO_PKG_AUTHORS");
-    let author_list: Vec<_> = authors.split(':').collect();
-
-    match author_list.len() {
-        0 => println!("No authors listed"),
-        1 => println!("Author: {}", author_list[0]),
-        n => {
-            println!("Authors:");
-            for (i, author) in author_list.iter().enumerate() {
-                println!("  {}. {}", i + 1, author.trim());
-            }
-            println!("\nTotal: {} contributors", n);
-        }
+pub fn execute(cmd: &Commands, _debug: bool) -> Result<(), Box<dyn std::error::Error>> {
+    if let Commands::Author = cmd {
+        println!("Author: MiPnamic Von Wirklichkeit");
+        println!("Email: mipnamic@mipnamic.net");
     }
+    Ok(())
 }

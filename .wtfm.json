@@ -1,8 +1,16 @@
 {
-  "project_name": "WTFM (Write The F*cking Manual) ",
+  "project_name": "WTFM (Write The F*cking Manual)",
   "description": "This CLI tool will guide you in writing that (F) Manual.",
   "version": "0.1.0",
-  "license": "AGPL-3.0",
+  "license": {
+    "spdx_id": "AGPL-3.0-or-later",
+    "name": "GNU Affero General Public License v3.0 or later",
+    "category": "Copyleft",
+    "osi_approved": true,
+    "fsf_libre": true,
+    "deprecated": false,
+    "url": "https://spdx.org/licenses/AGPL-3.0-or-later.html"
+  },
   "setup_ci": false,
   "author_quantity": 1,
   "authors": [

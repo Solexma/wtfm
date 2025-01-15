@@ -1,18 +1,21 @@
-mod cli;
-mod commands;
-mod config;
-mod utils;
-
 use clap::Parser;
-use cli::args::{Cli, Commands};
+use wtfm::cli::args::{Cli, Commands};
+use wtfm::commands;
+use wtfm::utils::logger;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
+    logger::init(cli.debug);
 
-    match cli.command {
-        Some(Commands::Author) => commands::author::execute(&cli),
-        Some(Commands::Generate) => commands::generate::execute(&cli),
-        Some(Commands::Analyze) => commands::analyze::execute(&cli),
-        None => commands::analyze::execute(&cli),
+    match &cli.command {
+        Some(Commands::Author) => commands::author::execute(&Commands::Author, cli.debug),
+        Some(cmd @ Commands::Generate { .. }) => commands::generate::execute(cmd, cli.debug),
+        Some(cmd @ Commands::Analyze { .. }) => commands::analyze::execute(cmd, cli.debug),
+        None => commands::analyze::execute(
+            &Commands::Analyze {
+                project_folder: std::path::PathBuf::from("."),
+            },
+            cli.debug,
+        ),
     }
 }

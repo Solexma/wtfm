@@ -8,6 +8,7 @@ pub(crate) fn parse_git_info(git_path: &Path) -> GitInfo {
     let tags = read_tags(git_path);
 
     GitInfo {
+        is_git_repo: true,
         current_branch,
         remote_url,
         tags,
@@ -15,15 +16,14 @@ pub(crate) fn parse_git_info(git_path: &Path) -> GitInfo {
 }
 
 fn read_current_branch(git_path: &Path) -> Option<String> {
-    let current_branch = git_path.join("HEAD");
-    let current_branch = fs::read_to_string(current_branch).unwrap();
-    let current_branch = current_branch
+    let head_path = git_path.join("HEAD");
+    fs::read_to_string(head_path)
+        .ok()?
         .split("ref: refs/heads/")
         .nth(1)?
-        .to_string()
         .trim()
-        .to_string();
-    Some(current_branch)
+        .to_string()
+        .into()
 }
 
 /// Extracts the remote URL from the git config file.
@@ -35,7 +35,7 @@ fn read_current_branch(git_path: &Path) -> Option<String> {
 fn read_remote_url(git_path: &Path) -> Option<String> {
     let config_content = fs::read_to_string(git_path.join("config")).ok()?;
     config_content
-        .split('\n')
+        .lines()
         .skip_while(|line| !line.trim().starts_with("[remote"))
         .find_map(|line| {
             if line.trim().starts_with("url = ") {
