@@ -1,6 +1,6 @@
 [package]
 name = "wtfm"
-version = "0.1.0"
+version = "0.1.1"
 description = "This CLI tool will guide you in writing that (F) Manual."
 edition = "2021"
 authors = ["MiPnamic Von Wirklichkeit <mipnamic@mipnamic.net>"]

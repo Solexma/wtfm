@@ -1,7 +1,7 @@
 {
   "project_name": "WTFM (Write The F*cking Manual)",
   "description": "This CLI tool will guide you in writing that (F) Manual.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": {
     "spdx_id": "AGPL-3.0-or-later",
     "name": "GNU Affero General Public License v3.0 or later",
