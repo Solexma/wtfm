@@ -41,7 +41,7 @@ pub fn execute(cmd: &Commands, debug: bool) -> Result<(), Box<dyn std::error::Er
             debug!("Found .wtfm.json configuration file");
         }
 
-        let git = Git::new(&project_folder);
+        let git = Git::new(project_folder);
         if git.is_repo() {
             is_git_repo = true;
             debug!("Found .git folder");
@@ -52,7 +52,7 @@ pub fn execute(cmd: &Commands, debug: bool) -> Result<(), Box<dyn std::error::Er
             debug!("Found package.json file");
         }
 
-        let cargo = Cargo::new(&project_folder);
+        let cargo = Cargo::new(project_folder);
         if cargo.info().is_some() {
             is_rust_project = true;
             debug!("Found Cargo.toml file");

@@ -1,4 +1,5 @@
-mod git;
 mod parser;
+pub use self::parser::*;
 
-pub use git::{Git, GitInfo};
+pub use self::types::*;
+mod types;

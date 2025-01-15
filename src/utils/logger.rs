@@ -9,7 +9,7 @@ pub fn init(debug: bool) {
 #[macro_export]
 macro_rules! debug {
     ($($arg:tt)*) => {
-        if crate::utils::logger::is_debug_enabled() {
+        if $crate::utils::logger::is_debug_enabled() {
             println!($($arg)*);
         }
     };
