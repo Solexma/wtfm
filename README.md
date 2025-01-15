@@ -6,6 +6,6 @@ This CLI tool will guide you in writing that (F) Manual.
 
 Licensed under GNU Affero General Public License v3.0 or later.
 
-## Authors/Maintainers
+## Author/Maintainer
 
-- MiPnamic Von Wirklichkeit <mipnamic@mipnamic.net>
+MiPnamic Von Wirklichkeit <mipnamic@mipnamic.net>
