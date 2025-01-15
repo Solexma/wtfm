@@ -1,4 +1,4 @@
-use crate::utils::cargo::cargo::CargoInfo;
+use super::CargoInfo;
 use std::fs;
 use std::path::Path;
 use toml;

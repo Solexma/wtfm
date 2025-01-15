@@ -31,11 +31,6 @@ impl Git {
         }
 
         let git_path = self.path.join(".git");
-        Some(GitInfo {
-            is_git_repo: true,
-            current_branch: parser::read_current_branch(&git_path),
-            remote_url: parser::read_remote_url(&git_path),
-            tags: parser::read_tags(&git_path),
-        })
+        Some(parser::parse_git_info(&git_path))
     }
 }

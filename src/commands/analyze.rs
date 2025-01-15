@@ -1,7 +1,7 @@
 use crate::cli::args::Commands;
 use crate::config::wtfm::WtfmConfig;
 use crate::debug;
-use crate::utils::cargo::cargo::Cargo;
+use crate::utils::cargo::Cargo;
 use crate::utils::git::Git;
 use colored::*;
 use std::fs;

@@ -2,20 +2,16 @@ use super::GitInfo;
 use std::fs;
 use std::path::Path;
 
-pub(crate) fn parse_git_info(git_path: &Path) -> GitInfo {
-    let current_branch = read_current_branch(git_path);
-    let remote_url = read_remote_url(git_path);
-    let tags = read_tags(git_path);
-
+pub fn parse_git_info(git_path: &Path) -> GitInfo {
     GitInfo {
         is_git_repo: true,
-        current_branch,
-        remote_url,
-        tags,
+        current_branch: read_current_branch(git_path),
+        remote_url: read_remote_url(git_path),
+        tags: read_tags(git_path),
     }
 }
 
-fn read_current_branch(git_path: &Path) -> Option<String> {
+pub fn read_current_branch(git_path: &Path) -> Option<String> {
     let head_path = git_path.join("HEAD");
     fs::read_to_string(head_path)
         .ok()?
@@ -32,7 +28,7 @@ fn read_current_branch(git_path: &Path) -> Option<String> {
 /// - Handle multiple remotes (currently returns only the first URL found)
 /// - Add preference for "origin" remote
 /// - Consider returning a Vec<String> for all remotes and let the user choose the one they want
-fn read_remote_url(git_path: &Path) -> Option<String> {
+pub fn read_remote_url(git_path: &Path) -> Option<String> {
     let config_content = fs::read_to_string(git_path.join("config")).ok()?;
     config_content
         .lines()
@@ -51,7 +47,7 @@ fn read_remote_url(git_path: &Path) -> Option<String> {
 /// # TODO
 /// - Handle multiple tags (currently returns only the first tag found)
 /// - Consider returning a Vec<String> for all tags and let the user choose the one they want
-fn read_tags(git_path: &Path) -> Vec<String> {
+pub fn read_tags(git_path: &Path) -> Vec<String> {
     let tags = git_path.join("refs/tags");
     let tags = fs::read_dir(tags).unwrap();
     let tags = tags

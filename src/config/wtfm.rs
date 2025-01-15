@@ -1,6 +1,6 @@
 use crate::debug;
 use crate::licenses::License;
-use crate::utils::cargo::cargo::CargoInfo;
+use crate::utils::cargo::CargoInfo;
 use crate::utils::git::GitInfo;
 use serde::{Deserialize, Serialize};
 use std::fs;
