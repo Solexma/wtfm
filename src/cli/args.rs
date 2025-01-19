@@ -20,6 +20,8 @@ pub enum Commands {
         #[arg(short, long, default_value = ".")]
         project_folder: PathBuf,
     },
+    /// Display info about the project
+    Info,
     /// Display author information
     Author,
     /// Generate README file

@@ -8,6 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     logger::init(cli.debug);
 
     match &cli.command {
+        Some(Commands::Info) => commands::info::execute(&Commands::Info, cli.debug),
         Some(Commands::Author) => commands::author::execute(&Commands::Author, cli.debug),
         Some(cmd @ Commands::Generate { .. }) => commands::generate::execute(cmd, cli.debug),
         Some(cmd @ Commands::Analyze { .. }) => commands::analyze::execute(cmd, cli.debug),
