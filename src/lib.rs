@@ -1,5 +1,6 @@
 pub mod cli;
 pub mod commands;
 pub mod config;
-pub mod licenses;
+pub mod error;
 pub mod utils;
+pub mod wizard;

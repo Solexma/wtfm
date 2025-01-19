@@ -2,9 +2,15 @@
 
 This CLI tool will guide you in writing that (F) Manual.
 
+## Features
+
+- Guided generation of THAT F*cking Manual
+- Editing capabilities of THAT F*cking Manual
+- TIPS for every section
+
 ## License
 
-Licensed under GNU Affero General Public License v3.0 or later.
+Licensed under GNU General Public License v3.0.
 
 ## Author/Maintainer
 

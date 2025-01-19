@@ -1,8 +1,12 @@
-use wtfm::config::wizard::WizardAnswers;
+use wtfm::config::wtfm::WtfmConfig;
 
 #[test]
 fn test_template_generation() {
-    let answers = WizardAnswers::new_test();
-    assert!(!answers.project_name.is_empty());
-    assert!(!answers.description.is_empty());
+    let config = WtfmConfig {
+        project_name: "Test Project".to_string(),
+        description: "Test Description".to_string(),
+        ..Default::default()
+    };
+    assert!(!config.project_name.is_empty());
+    assert!(!config.description.is_empty());
 }

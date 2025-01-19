@@ -67,7 +67,6 @@ impl License {
                 true,
                 false,
             ),
-            // Add more licenses...
         ]
     }
 

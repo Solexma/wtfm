@@ -1,36 +1,56 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
-#[derive(Parser)]
-#[command(version, about)]
+#[derive(Parser, Debug)]
+#[command(name = "wtfm")]
+#[command(about = "Write The F*cking Manual")]
 pub struct Cli {
     #[command(subcommand)]
-    pub command: Option<Commands>,
-
-    /// Enable debug output
-    #[arg(short, long)]
-    pub debug: bool,
+    pub command: Commands,
 }
 
-#[derive(clap::Subcommand)]
+#[derive(Subcommand, Debug)]
 pub enum Commands {
-    /// Analyze the project
-    Analyze {
-        /// Project directory to analyze
+    /// Generate documentation
+    Generate {
+        /// Output directory
+        #[arg(short, long, default_value = ".")]
+        output: PathBuf,
+
+        /// Project folder
         #[arg(short, long, default_value = ".")]
         project_folder: PathBuf,
     },
-    /// Display info about the project
-    Info,
-    /// Display author information
-    Author,
-    /// Generate README file
-    Generate {
-        /// Output directory for the generated README
-        #[arg(short, long, default_value = ".")]
-        output: PathBuf,
-        /// Project directory
+
+    /// Analyze project
+    Analyze {
+        /// Project folder
         #[arg(short, long, default_value = ".")]
         project_folder: PathBuf,
+    },
+
+    /// Show project info
+    Info {
+        /// Project folder
+        #[arg(short, long, default_value = ".")]
+        project_folder: PathBuf,
+    },
+
+    /// Manage authors
+    Author {
+        /// Project folder
+        #[arg(short, long, default_value = ".")]
+        project_folder: PathBuf,
+    },
+
+    /// Edit configuration
+    Edit {
+        /// Project folder
+        #[arg(short, long, default_value = ".")]
+        project_folder: PathBuf,
+
+        /// Section to edit (optional)
+        #[arg(short, long)]
+        section: Option<String>,
     },
 }

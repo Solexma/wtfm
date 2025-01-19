@@ -1,4 +1,4 @@
 mod parser;
 mod types;
 
-pub use types::{Git, GitInfo};
+pub use types::GitInfo;

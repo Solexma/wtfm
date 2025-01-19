@@ -2,21 +2,34 @@
   "project_name": "WTFM (Write The F*cking Manual)",
   "description": "This CLI tool will guide you in writing that (F) Manual.",
   "version": "0.1.1",
-  "license": {
-    "spdx_id": "AGPL-3.0-or-later",
-    "name": "GNU Affero General Public License v3.0 or later",
-    "category": "Copyleft",
-    "osi_approved": true,
-    "fsf_libre": true,
-    "deprecated": false,
-    "url": "https://spdx.org/licenses/AGPL-3.0-or-later.html"
-  },
-  "setup_ci": false,
-  "author_quantity": 1,
   "authors": [
     {
       "name": "MiPnamic Von Wirklichkeit",
       "email": "mipnamic@mipnamic.net"
     }
-  ]
+  ],
+  "license": {
+    "name": "GNU General Public License v3.0",
+    "spdx_id": "GPL-3.0",
+    "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
+  },
+  "setup_ci": false,
+  "ci_features": [],
+  "ci_branches": [],
+  "features": [
+    "Guided generation of THAT F*cking Manual",
+    "Editing capabilities of THAT F*cking Manual",
+    "TIPS for every section"
+  ],
+  "prerequisites": [],
+  "install_steps": [],
+  "sections_status": {
+    "CI/CD": "Skipped",
+    "License": "Configured",
+    "Features": "Configured",
+    "Authors": "Configured",
+    "Project": "Configured",
+    "Project Information": "Configured",
+    "Installation": "Skipped"
+  }
 }

@@ -3,12 +3,12 @@
 {{ newline() }}
 ## Author/Maintainer
 
-{{ authors[0] }}
+{{ authors[0].name }} <{{ authors[0].email }}>
 {%- else %}
 
 ## Authors/Maintainers
 {% for author in authors %}
-- {{ author }}
+- {{ author.name }} ({{ author.email }})
 {%- endfor %}
 {%- endif %}
 {%- endif %}

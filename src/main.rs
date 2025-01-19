@@ -1,22 +1,19 @@
 use clap::Parser;
+use std::error::Error;
 use wtfm::cli::args::{Cli, Commands};
-use wtfm::commands;
-use wtfm::utils::logger;
+use wtfm::commands::{analyze, author, edit, generate, info};
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-    logger::init(cli.debug);
+    let debug = std::env::var("WTFM_DEBUG").is_ok();
 
     match &cli.command {
-        Some(Commands::Info) => commands::info::execute(&Commands::Info, cli.debug),
-        Some(Commands::Author) => commands::author::execute(&Commands::Author, cli.debug),
-        Some(cmd @ Commands::Generate { .. }) => commands::generate::execute(cmd, cli.debug),
-        Some(cmd @ Commands::Analyze { .. }) => commands::analyze::execute(cmd, cli.debug),
-        None => commands::analyze::execute(
-            &Commands::Analyze {
-                project_folder: std::path::PathBuf::from("."),
-            },
-            cli.debug,
-        ),
+        Commands::Generate { .. } => generate::execute(&cli.command, debug)?,
+        Commands::Analyze { .. } => analyze::execute(&cli.command, debug)?,
+        Commands::Info { .. } => info::execute(&cli.command, debug)?,
+        Commands::Author { .. } => author::execute(&cli.command, debug)?,
+        Commands::Edit { .. } => edit::execute(&cli.command, debug)?,
     }
+
+    Ok(())
 }

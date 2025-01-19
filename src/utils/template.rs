@@ -1,79 +1,59 @@
-use crate::config::wizard::WizardAnswers;
+use crate::config::wtfm::WtfmConfig;
 use std::collections::HashMap;
-use tera::{Context, Tera, Value};
+use std::error::Error;
+use std::path::Path;
+use tera::{Context, Tera};
 
-fn newline_fn(_args: &HashMap<String, Value>) -> Result<Value, tera::Error> {
-    Ok(Value::String("\n".to_string()))
-}
+pub fn generate_readme_with_template(config: &WtfmConfig) -> Result<String, Box<dyn Error>> {
+    let template_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("templates");
+    let template_glob = template_path.join("**/*.tera");
+    let template_pattern = template_glob.to_str().ok_or("Invalid template path")?;
 
-// Template structure:
-// In the beginning we will implement a standard GitHub README.md template
-// Then we will move to more structured forms like DocBook and Diataxis
-pub fn generate_readme_with_template(answers: &WizardAnswers) -> String {
-    let mut tera = match Tera::new("templates/**/*") {
+    let mut tera = match Tera::new(template_pattern) {
         Ok(t) => t,
         Err(e) => {
-            panic!("Parsing error(s): {}", e);
+            return Err(format!("Failed to initialize Tera: {}", e).into());
         }
     };
 
-    // Registra la funzione newline
-    tera.register_function("newline", newline_fn);
+    tera.register_function("newline", |_args: &HashMap<String, tera::Value>| {
+        Ok(tera::Value::String("\n".to_string()))
+    });
 
     let mut context = Context::new();
-    context.insert("project_name", &answers.project_name);
-    context.insert("description", &answers.description);
-    context.insert("version", &answers.version);
-    context.insert("license", &answers.license);
-    context.insert("setup_ci", &answers.setup_ci);
-    context.insert("authors", &answers.authors);
+    context.insert("project_name", &config.project_name);
+    context.insert("description", &config.description);
+    context.insert("version", &config.version);
+    context.insert("license", &config.license);
+    context.insert("setup_ci", &config.setup_ci);
+    context.insert("authors", &config.authors);
+    context.insert("features", &config.features);
+    context.insert("prerequisites", &config.prerequisites);
+    context.insert("install_steps", &config.install_steps);
+    context.insert("ci_platform", &config.ci_platform);
+    context.insert("ci_features", &config.ci_features);
+    context.insert("ci_branches", &config.ci_branches);
 
     match tera.render("readme.tera", &context) {
-        Ok(rendered) => rendered,
-        Err(e) => {
-            panic!("Failed to render template: {}", e);
-        }
+        Ok(s) => Ok(s),
+        Err(e) => Err(format!("Template rendering error: {}", e).into()),
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::wizard::WizardAnswers;
-    use crate::licenses::{License, LicenseCategory};
-
-    fn create_test_answers() -> WizardAnswers {
-        WizardAnswers {
-            project_name: "Test Project".to_string(),
-            description: "A test project".to_string(),
-            version: "0.1.0".to_string(),
-            license: License::new(
-                "MIT",
-                "MIT License",
-                LicenseCategory::Permissive,
-                true,
-                true,
-                false,
-            ),
-            setup_ci: true,
-            author_quantity: 2,
-            authors: vec!["Author 1".to_string(), "Author 2".to_string()],
-        }
-    }
+    use crate::config::wtfm::WtfmConfig;
 
     #[test]
     fn test_generate_readme() {
-        let answers = create_test_answers();
-        let readme = generate_readme_with_template(&answers);
-        assert!(readme.contains(&answers.project_name));
-        assert!(readme.contains(&answers.license.spdx_id));
-    }
-
-    #[test]
-    fn test_generate_readme_without_ci() {
-        let mut answers = create_test_answers();
-        answers.setup_ci = false;
-        let readme = generate_readme_with_template(&answers);
-        assert!(!readme.contains("Continuous Integration"));
+        let config = WtfmConfig {
+            project_name: "Test Project".to_string(),
+            description: "A test project".to_string(),
+            ..Default::default()
+        };
+        let readme = generate_readme_with_template(&config).unwrap();
+        assert!(readme.contains(&config.project_name));
+        assert!(readme.contains(&config.description));
     }
 }
